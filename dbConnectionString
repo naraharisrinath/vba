@@ -1,0 +1,78 @@
+'Parameters for both functions:-
+
+
+
+SERVER_IP - Either valid Server name or IP address (e.g. 192.168.10.10)
+PORT  - Enter port number (for MySql it is 3306, PostgreSQL 5432
+DATABASE - Database name
+USERNAME - Database username 
+PASSWORD - Database password
+
+
+--------------------------------------------------------------------------------------------------
+
+'Function to return connection string for PostgreSQL 9.1 database
+
+
+
+Function dbConnectionString() As String
+
+    Dim ConnString As String
+
+        ConnString = "Driver={PostgreSQL ANSI};" & _
+
+                    "Server=" & SERVER_IP & _
+
+                    ";Port=" & PORT & _
+
+                    ";Database=" & DATABASE & _
+
+                    ";Uid=" & USERNAME & _
+
+                    ";Pwd=" & PASSWORD & ";"
+
+
+
+    dbConnectionString = ConnString
+
+ 
+
+End Function
+
+
+
+-------------------------------------------------------------------------------------------
+
+
+
+'Function to return connection string for MySql 5.3 database
+
+
+
+Function dbConnectionString() As String
+
+    Dim ConnString As String
+
+
+
+        ConnString = "Driver={MySQL ODBC 5.3 ANSI Driver};" & _
+
+                    "Server=" & SERVER_IP & _
+
+                    ";Port=" & PORT & _
+
+                    ";Database=" & DATABASE & _
+
+                    ";User=" & USERNAME & _
+
+                    ";Password=" & PASSWORD & _
+
+                    ";Option=3;"
+
+
+
+    dbConnectionString = ConnString
+
+ 
+
+End Function
