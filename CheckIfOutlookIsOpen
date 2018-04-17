@@ -1,0 +1,26 @@
+Private Sub TestOutlookIsOpen()
+    Dim oOutlook As Object
+    Dim strVersion As String
+    
+    strVersion = Application.Version
+ 
+    Select Case strVersion 'Determine Version
+        Case "12.0"
+            strVersion = "Office12"
+        Case "14.0"
+            strVersion = "Office14"
+        Case "16.0"
+            strVersion = "Office16"
+    End Select
+    
+    On Error Resume Next
+    Set oOutlook = GetObject(, "Outlook.Application")
+    On Error GoTo 0
+
+    If oOutlook Is Nothing Then
+        Dim x
+        x = Shell("C:\Program Files (x86)\Microsoft Office\" & strVersion & "\OUTLOOK.EXE", vbMaximizedFocus)
+'    Else
+'        MsgBox "Outlook is already open."
+    End If
+End Sub
