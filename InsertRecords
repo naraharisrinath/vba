@@ -1,0 +1,77 @@
+Function InsRecord(sql As String) As Long
+
+On Error GoTo ErrorHandler
+
+    Dim conn As New ADODB.Connection
+
+    Dim cmd As New ADODB.Command
+
+    Dim recordsAffected As Long
+
+ 
+
+    With Conn
+
+        .ConnectionString = dbConnectionString
+
+        .CommandTimeout = 0
+
+        .CursorLocation = adUseClient
+
+        .Open
+
+    End With
+
+ 
+
+    With cmd
+
+        .CommandType = adCmdText
+
+        .CommandText = sql
+
+        .ActiveConnection = conn
+
+        .Execute InsRecord
+
+    End With
+
+ 
+
+ExitHandler:
+
+    If conn.State = adStateOpen Then
+
+        conn.Close
+
+    End If
+
+ 
+
+    Set conn = Nothing
+
+    Set cmd = Nothing
+
+ 
+
+    Exit Function
+
+ 
+
+ErrorHandler:
+
+    InsRecords = 0
+
+    MsgBox Err.Number & " " & Err.Description
+
+    Resume ExitHandler
+
+ 
+
+End Function
+
+
+
+'dbConnectionString is a variable containing a valid database connection string
+
+'sql is a variable that has a valid DML statement
