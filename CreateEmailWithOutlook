@@ -1,0 +1,46 @@
+Public Sub CreateEmailWithOutlook()
+On Error GoTo ErrorHandler
+
+    ' Define app variable and get Outlook using the "New" keyword
+    Dim olApp As New Outlook.Application
+    Dim olMailItem As Outlook.MailItem  ' An Outlook Mail item
+    Dim strPath As String
+    dim getMessageBody as string
+    
+    getMessageBody = "<HTML><BODY style=font-size:11pt;font-family:Calibri>Hi Claude,<br><br>"
+    getMessageBody = getMessageBody & "Please see the attached for weeks' report.<br><br>"
+    getMessageBody = getMessageBody & "Kind regards,<br>Cloudbase Support<br>SmallCell Technology Group (SCTG),<br>"
+    getMessageBody = getMessageBody & "Email-Id: " & "<a href=""mailto:cloudbase-support@cisco.com"">Cloudbase Support</a>"
+    getMessageBody = getMessageBody & "</BODY></HTML>"
+            
+    ' Create a new email object
+    Set olMailItem = olApp.CreateItem(0)
+
+    ' Add the To/Subject/Body to the message and display the message
+    With olMailItem
+        .SentOnBehalfOfName = getFromAddress
+        .To = "to_address"
+        .CC = "cc_address"
+        .Subject = "subject"
+        .BodyFormat = olFormatHTML
+        .HTMLBody = getMessageBody
+        
+        If Len(strPath) > 0 Then
+            .Attachments.Add (strPath)
+        End If
+        
+        .Display    ' To show the email message to the user
+    End With
+    
+ExitHandler:
+    ' Release all object variables
+    Set olMailItem = Nothing
+    Set olApp = Nothing
+    
+    Exit Sub
+
+ErrorHandler:
+    Call GlobalErrorHandler(Err.Number, Err.Description, "CreateEmailWithOutlook")
+    Resume ExitHandler
+
+End Sub
