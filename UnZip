@@ -1,0 +1,68 @@
+'This function unzips a file to specific folder
+
+
+Private Sub Unzip(FilePath As String, NewFileName As String)
+
+On Error GoTo ErrorHandler
+
+
+
+    Dim FSO As Object
+
+    Dim oApp As Object
+
+    Dim Fname As Variant
+
+    Dim FileNameFolder As Variant
+
+    Dim strDate As String
+
+
+
+    Fname = FilePath
+
+
+
+    'Create the folder name
+
+    FileNameFolder = UnzippedFolder
+
+
+
+    'Make the normal folder in DefPath
+
+ 
+
+    If Dir(FileNameFolder) = "" Then
+
+        MkDir FileNameFolder
+
+    End If
+
+
+
+    'Extract the files into the newly created folder
+
+    Set oApp = CreateObject("Shell.Application")
+
+
+
+    oApp.NameSpace(FileNameFolder).CopyHere oApp.NameSpace(Fname).Items
+
+    Name FileNameFolder & OldFileName As FileNameFolder & NewFileName & XlExtn
+
+     
+
+ExitHandler:
+
+    Exit Sub
+
+ 
+
+ErrorHandler:
+
+    MsgBox Err.Number & " " & Err.Description
+
+    Resume ExitHandler
+
+End Sub
