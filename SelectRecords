@@ -1,0 +1,93 @@
+Function getRecords(sql As String) As ADODB.Recordset
+
+On Error GoTo ErrorHandler
+
+    Dim Conn As New ADODB.Connection
+
+    Dim cmd As New ADODB.Command
+
+    Dim rst As New ADODB.Recordset
+
+ 
+
+   conn.Open ConnectionString
+
+ 
+
+    With Conn
+
+        .ConnectionString = dbConnectionString
+
+        .CommandTimeout = 0
+
+        .Open
+
+    End With
+
+ 
+
+    With cmd
+
+        .CommandType = adCmdText
+
+        .CommandText = sql
+
+        .ActiveConnection = Conn
+
+    End With
+
+     
+
+    With rst
+
+        .CursorType = adOpenKeyset
+
+        .CursorLocation = adUseClient
+
+        .Open cmd
+
+    End With
+
+ 
+
+    Set getRecords = rst.Clone
+
+ 
+
+ExitHandler:
+
+    If conn.State = adStateOpen Then
+
+        conn.Close
+
+   End If
+
+ 
+
+    Set Conn = Nothing
+
+    Set cmd = Nothing
+
+ 
+
+    Exit Function
+
+ 
+
+ErrorHandler:
+
+    Set getRecords = Nothing
+
+    MsgBox Err.Number & " " & Err.Description
+
+    Resume ExitHandler
+
+ 
+
+End Function
+
+
+
+'dbConnectionString is a variable containing a valid database connection string
+
+'sql is a variable that has a valid DML statement
