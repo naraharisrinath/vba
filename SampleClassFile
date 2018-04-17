@@ -1,0 +1,9 @@
+Private strTableName As String
+                        
+Public Property Get TableName() As String
+    TableName = strTableName
+End Property
+
+Public Property Let TableName(Table_Name As String)
+    strTableName = Table_Name
+End Property
