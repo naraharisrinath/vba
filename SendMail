@@ -1,0 +1,33 @@
+Private Sub SendMail()
+
+
+
+    Dim mail As MailItem 'object/mail item iterator
+
+    Dim replyall 'object which will represent the reply email
+
+
+
+
+
+    For Each mail In Outlook.Application.ActiveExplorer.Selection
+
+        If mail.Class = olMail Then
+
+            Set replyall = mail.replyall
+
+            mail.SentOnBehalfOfName = getFromAddress
+
+            With replyall
+
+                .HTMLBody = getMessageBody & vbCrLf & .HTMLBody                        
+
+                .Display
+
+            End With
+
+        End If
+
+    Next
+
+End Sub
