@@ -1,0 +1,28 @@
+Sub MailItems()
+    Dim olNamespace As Outlook.NameSpace
+    Dim olFolder  As Outlook.MAPIFolder
+    Dim olItem As Outlook.MailItem
+    
+    
+    Set olNamespace = Application.GetNamespace("MAPI")
+    Set olFolder = olNamespace.GetDefaultFolder(olFolderInbox).Folders("Cloudbase-support")
+
+    Set olItem = Application.CreateItem(olMailItem) ' Creat EMail
+    With olItem
+        For Each olItem In olFolder.Items
+'            Debug.Print olItem.Subject & " ," & olItem.ReceivedTime & vbCrLf  ' Print to immediate window
+            .Body = .Body & olItem.Subject & " ;" & olItem.ReceivedTime & vbCrLf ' Print to Email
+            
+'            Debug.Print olItem.SenderName
+'            .Body = .Body & olItem.SenderName & vbCrLf
+'
+'            Debug.Print olItem.ReceivedTime
+'            .Body = .Body & olItem.ReceivedTime & vbCrLf & vbCrLf
+            
+        Next ' vbCrLf = vb: Visual Basic Cr: Carriage Return Lf: LineFeed
+        
+        .Subject = "Mail Items" ' Subject
+        .Display    ' Display Msg
+    End With
+
+End Sub
