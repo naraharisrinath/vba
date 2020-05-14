@@ -1,0 +1,75 @@
+Sub ShowPivotTableGrandTotalDetails()
+
+On Error GoTo ErrorHandler
+
+    Dim xlApp As New Excel.Application
+    Dim XlWkb As Excel.Workbook
+    Dim XlWksErdEbdDump As Excel.Worksheet
+    Dim XlPath As String
+    
+    Dim pt As Excel.PivotTable
+    Dim rngPT_EntireRange As Range
+    Dim rngPT_RowCount As Integer
+    Dim rngPT_ColCount As Integer
+    Dim rngPT_GrdTot As Excel.Range
+    
+    'Open Workbook
+    XlPath = "C:\Workspace\Reports\ERD-EBD\13-MAY-2020\EBD ERD LOCKED IN Report_13-05-2020.xlsx"
+    
+    Set XlWkb = xlApp.Workbooks.Open(XlPath)
+    Set XlWksErdEbdDump = XlWkb.Sheets("ERD-EBD Locked-in")
+    
+    With XlWksErdEbdDump
+        .Range("A1:A1").EntireRow.Insert 'Insert a row on top of the sheet to accomodate SAP_PROJ_BU filter
+        
+        Set pt = .PivotTables("PivotTable2")
+        
+        With pt.PivotFields("SAP_PROJ_BU")
+            .Orientation = xlPageField
+            .Position = 10
+        End With
+        
+        pt.PivotFields("SAP_PROJ_BU").CurrentPage = "TECH" 'Apply the filter for SAP_PROJ_BU
+    
+'        .Cells.Find(What:="du_practice", LookIn:=xlFormulas, LookAt _
+'            :=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, MatchCase:= _
+'            False, SearchFormat:=False).Activate
+    
+    End With
+    
+    Set rngPT_EntireRange = pt.DataBodyRange 'Databody range has all the data ranges in an given pivottable
+    
+    rngPT_RowCount = rngPT_EntireRange.Rows.Count 'get pivottable row count
+    rngPT_ColCount = rngPT_EntireRange.Columns.Count 'get pivottable column count
+    
+    'goto grandtotal field of pivottable, which is at the last of pivottable using offset
+    Set rngPT_GrdTot = rngPT_EntireRange.Cells(1).Offset(rngPT_RowCount - 1, rngPT_ColCount - 1)
+    
+    
+    'Show the grand total range data
+    rngPT_GrdTot.ShowDetail = True
+    
+    xlApp.Visible = True
+       
+ExitHandler:
+    
+    If Not XlWksErdEbdDump Is Nothing Then
+        Set XlWksErdEbdDump = Nothing
+    End If
+    
+    If Not XlWkb Is Nothing Then
+        XlWkb.Close False
+        Set XlWkb = Nothing
+    End If
+    
+    If Not xlApp Is Nothing Then
+        Set xlApp = Nothing
+    End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox Err.Number & " " & Err.Description
+    Resume ExitHandler
+    
+End Sub
