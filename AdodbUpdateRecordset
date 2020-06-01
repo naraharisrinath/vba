@@ -1,0 +1,109 @@
+Option Compare Database
+Option Explicit
+
+Private connDB As New ADODB.Connection
+Private strSQL As String
+Private strConnectionstring As String
+Private strServer As String
+Private strDBase As String
+Private strUser As String
+Private strPwd As String
+
+Private Sub CloseConection()
+    If connDB.State = 1 Then connDB.Close
+End Sub
+
+Private Sub ConnectDatabase()
+     
+On Error GoTo ErrorHandler
+    CloseConection
+    strServer = ".\SQLEXPRESS" 'The name or IP Address of the SQL Server
+    strDBase = "UNPLANNED_RAMPUP_RAMPDOWN"
+    strUser = "" 'leave this blank for Windows authentication
+    strPwd = ""
+    
+    If strPwd > "" Then
+        strConnectionstring = "DRIVER={SQL Server};Server=" & strServer & ";Database=" & strDBase & ";Uid=" & strUser & ";Pwd=" & strPwd & ";Connection Timeout=30;"
+    Else
+        strConnectionstring = "DRIVER={SQL Server};SERVER=" & strServer & ";Trusted_Connection=yes;DATABASE=" & strDBase    'Windows authentication
+    End If
+    
+    connDB.ConnectionTimeout = 30
+    connDB.Open strConnectionstring
+    
+ExitHandler:
+    Exit Sub
+    
+ErrorHandler:
+    CloseConection
+    MsgBox Err.Description
+    Resume ExitHandler
+End Sub
+
+Private Sub AssignTableValues()
+    Call APPEND_ZCOP_REPORT("TODAY_ZCOP_REPORT_DAY", "TODAY_ZCOP_REPORT")
+    Call APPEND_ZCOP_REPORT("yester_ZCOP_REPORT_DAY", "YESTER_ZCOP_REPORT")
+End Sub
+
+Public Sub APPEND_ZCOP_REPORT(LocalTableName As String, DatabaseTableName As String)
+On Error GoTo ErrorHandler
+        
+    Dim dbs As dao.Database
+    Dim rst As New ADODB.Recordset
+    Dim rs As dao.Recordset
+    Dim strSQL As String
+    
+    Set dbs = CurrentDb
+    Set rs = dbs.OpenRecordset(LocalTableName)
+    
+    ConnectDatabase
+    
+    strSQL = "TRUNCATE TABLE " & DatabaseTableName
+    connDB.Execute strSQL
+    
+    connDB.CursorLocation = adUseClient
+    
+    strSQL = "SELECT * " & DatabaseTableName
+    rst.Open strSQL, connDB, adOpenDynamic, adLockOptimistic
+    
+    rs.MoveLast
+    rs.MoveFirst
+    
+    Do While Not rs.EOF
+    With rst
+        rst.AddNew
+        rst.Fields("EMP_CODE").Value = Nz(rs.Fields("EMP_CODE").Value, "")
+        rst.Fields("EMP_NAME").Value = Nz(rs.Fields("EMP_NAME").Value, "")
+        rst.Fields("PROJECT_CODE").Value = Nz(rs.Fields("PROJECT_CODE").Value, "")
+        rst.Fields("FLEXPROJ").Value = Nz(rs.Fields("FLEXPROJ").Value, "")
+        rst.Fields("TM_EMP_NO").Value = Nz(rs.Fields("TM_EMP_NO").Value, "")
+        rst.Fields("TM_NAME").Value = Nz(rs.Fields("TM_NAME").Value, "")
+        rst.Fields("PM_ID").Value = Nz(rs.Fields("PM_ID").Value, "")
+        rst.Fields("PM_NAME").Value = Nz(rs.Fields("PM_NAME").Value, "")
+        rst.Fields("LEAVE_STAT").Value = Nz(rs.Fields("LEAVE_STAT").Value, "")
+        rst.Fields("TOTAL_DAYS").Value = Nz(rs.Fields("TOTAL_DAYS").Value, "")
+        rst.Fields("BILLABILITY_STATUS").Value = Nz(rs.Fields("BILLABILITY_STATUS").Value, "")
+        rst.Fields("CUST_NAME").Value = Nz(rs.Fields("CUST_NAME").Value, "")
+        
+        .Update
+        rs.MoveNext
+        End With
+    Loop
+
+ExitHandler:
+    Call CloseConection
+    If Not dbs Is Nothing Then
+        Set dbs = Nothing
+    End If
+        
+    If Not rst Is Nothing Then
+        If rst.State = adStateOpen Then rst.Close
+        Set rst = Nothing
+    End If
+    
+    Exit Sub
+        
+ErrorHandler:
+    MsgBox Err.Number & " " & Err.Description
+    Resume ExitHandler
+End Sub
