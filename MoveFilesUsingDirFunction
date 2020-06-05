@@ -1,0 +1,47 @@
+Public Sub MoveFiles()
+
+    Dim FromFile As String
+    Dim ToFile As String
+    Dim FileList As Variant
+    Dim FromFolderPath As String
+    Dim ToFolderPath As String
+    Dim FileName As Variant
+    
+    Call CreateDir
+    
+    'List of files to be moved
+    FileList = Array("ZCOP Daily.csv.gz", "Account Tenure Report.csv.gz", _
+                    "AXNB.csv.gz", "Bench Report.csv.gz", "EBD ERD Report.csv.gz", "Expected Release Date Report (ERD).csv.gz", _
+                    "Fulfillment SLA (2020-2021).csv.gz", "GrossDump Daily.csv.gz", "Open Indent Report (OIR).csv.gz", _
+                    "People Availability Report (PAR).csv.gz", "SAP DBHC Ons Off Emp Level Data.csv.gz", _
+                    "Synergy Contract Leads.csv.gz", "Synergy Indent.csv.gz", "OIR_DELTA_MNT.csv", "TEST_ETR_REPORT.csv")
+                    
+    'Prepare filename in download folder to be moved
+    FromFolderPath = DOWNLOAD_FOLDER
+    
+    ToFolderPath = DUMPS_FOLDER & Format(Date, "dd-MMM-yyyy") & "\"
+    
+    For Each FileName In FileList
+        
+        FromFile = FromFolderPath & FileName
+        
+        If Dir(FromFile) <> "" Then 'Check if file exists in source folder
+            
+            ToFile = ToFolderPath & FileName
+            
+            If Dir(ToFile) <> "" Then 'Check if file exists in destination folder
+            
+                'Delete file, if file exists in destination folder
+                Kill (FromFile)
+            
+            Else
+            
+                'Move File
+                Name FromFile As ToFile
+            
+            End If
+        End If
+        
+    Next
+    
+End Sub
