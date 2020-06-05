@@ -1,0 +1,39 @@
+Private Sub CreateDir()
+
+    Dim elm As Variant
+    Dim strCheckPath As String
+    Dim dt As String
+    Dim FoldersList As Variant
+    Dim FolderValue As Variant
+    
+    strCheckPath = ""
+    
+    dt = Format(Date, "dd-MMM-yyyy") & "\"
+
+    FoldersList = Array("C:\Workspace\Dumps\", "C:\Workspace\Reports\CONTRACTOR_TO_EMP_MATCHING\", _
+                    "C:\Workspace\Reports\ERD-EBD\", "C:\Workspace\Reports\NETADD_PLAN_ACTUALS\", _
+                    "C:\Workspace\Reports\OIR\", "C:\Workspace\Reports\UNPLANNED_RAMPUP_RAMPDOWN\", _
+                    "C:\Users\SR333826\OneDrive - Wipro\Wipro\")
+    
+    For Each FolderValue In FoldersList
+        FolderValue = FolderValue & dt
+'        Debug.Print FolderValue
+        
+        For Each elm In Split(FolderValue, "\")
+            strCheckPath = strCheckPath & elm & "\"
+            If Len(Dir(strCheckPath, vbDirectory)) = 0 Then
+                MkDir strCheckPath
+            End If
+        Next
+        
+        strCheckPath = ""
+    Next
+    
+ExitHandler:
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox Err.Number & " " & Err.Description
+    Resume ExitHandler
+    
+End Sub
