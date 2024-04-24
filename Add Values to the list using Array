@@ -1,0 +1,19 @@
+Private Function cmdLoadFields()
+Dim rst As New ADODB.Recordset
+Dim i As Integer
+Dim a As Variant
+
+    a = Array("track_id", "ms_1_score", "ms_1_retest_score", "ms_2_score", "ms_2_retest_score", "ms_3_score", "ms_3_retest_score", "ms_4_score", "ms_4_retest_score", _
+            "ms_5_score", "ms_5_retest_score", "weekly_score_1", "weekly_score_2", "weekly_score_3", "weekly_score_4", "cefr_assessment", "cefr_assessment_1", _
+            "incentive_amount")
+    ReDim Preserve a(1 To UBound(a) + 1)
+
+'    Set rst = getRecords("SELECT * FROM pmo.milestones")
+    Me.cmbFields.RowSourceType = "Value List"
+    
+    Me.cmbFields.RowSource = ""
+
+    For i = 1 To (UBound(a)) Step 1
+        Me.cmbFields.AddItem a(i)
+    Next i
+End Function
