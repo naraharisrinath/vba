@@ -1,1 +1,6 @@
 nslookup -type=srv _ldap._tcp.DOMAINNAME
+
+or 
+
+
+nltest /dclist:yourdomain.com
