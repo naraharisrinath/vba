@@ -1,0 +1,31 @@
+//Usage is Authenticated(Nz(Me.txtUsername.Value, ""), Nz(Me.txtPassword.Value, ""), "company.com")
+
+Function Authenticated(strUserID As String, strPassword As String, Optional strDNSDomain As String) As Boolean
+
+On Error GoTo Error_Handler
+
+Dim objRootDSE As Object
+Dim DSO As Object
+Dim ou As Object
+
+    If strDNSDomain = "" Then
+        Set objRootDSE = GetObject("LDAP://ltimindtree.com/RootDSE")
+        strDNSDomain = objRootDSE.Get("defaultNamingContext")
+    End If
+
+'Authenticate
+    Set DSO = GetObject("LDAP:")
+    On Error Resume Next
+    Err.Clear
+    Set ou = DSO.OpenDSObject("LDAP://" & strDNSDomain, strUserID, strPassword, 1)
+    Authenticated = (Err.Number = 0)
+    
+Exit_Handler:
+    Exit Function
+
+Error_Handler:
+    Authenticated = False
+    'MsgBox Err.Number & " " & Err.Description
+    Resume Exit_Handler
+
+End Function
