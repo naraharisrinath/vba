@@ -1,0 +1,53 @@
+Public Sub Excel_Report_Export(rs As ADODB.Recordset)
+
+    Dim oExcel As Excel.Application
+    Dim oExcelWrkBk As Excel.Workbook
+    Dim oExcelWrSht As Excel.Worksheet
+    Dim iCols As Integer
+    
+    On Error GoTo Error_Handler
+
+    Set oExcel = New Excel.Application
+    oExcel.ScreenUpdating = False
+    oExcel.Visible = False
+    
+    Set oExcelWrkBk = oExcel.Workbooks.Add()
+    Set oExcelWrSht = oExcelWrkBk.Sheets(1)
+    
+    With rs
+        If .RecordCount >= 1 Then
+            For iCols = 0 To rs.Fields.Count - 1
+                oExcelWrSht.Cells(1, iCols + 1).Value = rs.Fields(iCols).name
+            Next
+            With oExcelWrSht.Range(oExcelWrSht.Cells(1, 1), _
+                                    oExcelWrSht.Cells(1, rs.Fields.Count))
+                .Font.Bold = True
+                .Font.ColorIndex = 2
+                .Interior.ColorIndex = 1
+                .HorizontalAlignment = xlCenter
+            End With
+            oExcelWrSht.Range(oExcelWrSht.Cells(1, 1), _
+                          oExcelWrSht.Cells(1, rs.Fields.Count)).Columns.AutoFit
+            oExcelWrSht.Range("A2").CopyFromRecordset rs
+            oExcelWrSht.Range("A1").Select
+        End If
+    End With
+    
+    oExcel.Visible = True
+    oExcelWrSht.Visible = xlSheetVisible
+    oExcel.ScreenUpdating = True
+    rs.Close
+   
+Exit_Handler:
+    Set rs = Nothing
+    Set oExcelWrSht = Nothing
+    Set oExcelWrkBk = Nothing
+    Set oExcel = Nothing
+    
+    Exit Sub
+    
+Error_Handler:
+    MsgBox Err.Number & " " & Err.Description
+    Resume Exit_Handler
+    
+End Sub
