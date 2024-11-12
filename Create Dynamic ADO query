@@ -1,0 +1,32 @@
+Public Sub DynamicQuery_New(sql As String)
+
+On Error GoTo ErrorHandler
+
+    Dim CurrDB As DAO.Database
+    Dim qdf As QueryDef
+    Dim query_name As String
+    
+    Set CurrDB = CurrentDb
+    
+    query_name = "Report"
+    
+    With CurrDB
+        For Each qdf In CurrDB.QueryDefs
+            If qdf.name = query_name Then
+                DoCmd.Close acQuery, query_name, acSaveNo
+            Exit For
+            End If
+        Next
+    End With
+
+    CurrentDb().QueryDefs(query_name).sql = sql
+
+    DoCmd.OpenQuery query_name
+
+ExitHandler:
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox Err.Number & " " & Err.Description
+    Resume ExitHandler
+End Sub
