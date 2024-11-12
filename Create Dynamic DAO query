@@ -1,0 +1,36 @@
+Public Sub DynamicQuery(getWhere As String)
+
+On Error GoTo ErrorHandler
+
+    Dim qdf As QueryDef
+    Dim query_name As String
+    Dim CurrDB As DAO.Database
+    
+    query_name = "NewQuery"
+    Set CurrDB = CurrentDb
+   
+    With CurrDB
+        For Each qdf In CurrDB.QueryDefs
+            If qdf.name = query_name Then
+                DoCmd.Close acQuery, query_name, acSaveNo
+                .QueryDefs.Delete (query_name)
+            Exit For
+            End If
+        Next
+    End With
+    
+    Set qdf = CurrDB.CreateQueryDef("NewQuery", getWhere)
+    DoCmd.OpenQuery qdf.name, acViewNormal, acReadOnly
+    
+    qdf.Close 'i changed qdef to qdf here and below
+    Set qdf = Nothing
+    
+'    Debug.Print sql
+
+ExitHandler:
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox Err.Number & " " & Err.Description
+    Resume ExitHandler
+End Sub
